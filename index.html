@@ -6,12 +6,43 @@
   <title>Lucky Wheel</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-    canvas { border: 5px solid #444; border-radius: 50%; transition: transform 4s ease-out; }
-    button { margin-top: 20px; padding: 10px 20px; font-size: 18px; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translate(-50%, 30%); }
-      to { opacity: 1; transform: translate(-50%, -50%); }
+    @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Bebas+Neue&family=Angkor&display=swap');
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 30px;
+      padding: 0 15px;
+    }
+    .wheel-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
+    }
+    canvas {
+      width: 100%;
+      height: auto;
+      border: 5px solid #444;
+      border-radius: 50%;
+      transition: transform 4s ease-out;
+    }
+    #pointer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -10%) rotate(90deg);
+      width: 0;
+      height: 0;
+      border-top: 20px solid transparent;
+      border-bottom: 20px solid transparent;
+      border-left: 50px solid black;
+      z-index: 10;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 25px;
+      font-size: 18px;
+      width: auto;
     }
     #congratsPopup {
       display: none;
@@ -20,63 +51,76 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background: #fff;
-      padding: 30px 50px;
+      padding: 30px 20px;
       border-radius: 20px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
       z-index: 999;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: bold;
       color: #28a745;
       opacity: 0;
-      transition: opacity 1s, transform 1s;
+      width: 90%;
+      max-width: 400px;
+      transition: opacity 1s ease, transform 1s ease;
     }
     #prizeImage {
-      max-width: 200px;
+      max-width: 100%;
+      height: auto;
       margin-top: 10px;
+      border-radius: 10px;
     }
-    #pointer {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -100%);
-      width: 0;
-      height: 100px;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 40px solid #000;
-      pointer-events: none;
-      z-index: 10;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
-    #prizeList {
-      margin-top: 40px;
+    .text-center {
+      font-family: "Koulen", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+    }
+    #closePopup {
+      font-family: "Angkor", serif;
+    }
+    table {
+      font-size: 14px;
+    }
+    @media (max-width: 768px) {
+      h1 { font-size: 1.5rem; }
+      button { font-size: 16px; padding: 8px 20px; }
+      #congratsPopup { font-size: 18px; }
+      #pointer {
+        border-left: 30px solid black;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+      }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 1.3rem; }
+      table th, table td { font-size: 12px; }
+      #congratsPopup { padding: 20px 15px; }
+      button { font-size: 14px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="text-center mb-4">
-      <img class="img-fluid mx-auto d-block" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAUjlHjzRERgX1K6bwkj_tR-hMzkrUpIkFLg&s" alt="KHL688 Logo" style="max-width: 100px;">
-      <span class="text-warning">KHL688 PhoneStore</span>
-    </h1>
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAUjlHjzRERgX1K6bwkj_tR-hMzkrUpIkFLg&s" class="img-fluid" alt="Banner">
+    <h1 class="text-center mb-4"><span class="text-dark title">KHL688 PHONE STORE</span></h1>
 
-    <div class="position-relative d-flex justify-content-center">
-      <canvas id="wheelCanvas" width="500" height="500" class="img-fluid"></canvas>
+    <div class="wheel-wrapper">
+      <canvas id="wheelCanvas" width="500" height="500"></canvas>
       <div id="pointer"></div>
     </div>
 
-    <button id="spinButton" class="btn btn-primary">Spin the Wheel</button>
+    <button id="spinButton" class="btn btn-primary" style="font-family: 'Angkor', serif;">បង្វិល</button>
 
-    <div class="row" id="prizeList">
+    <div class="row mt-4">
       <div class="col-12">
-        <h3>🎁 Prize Winners</h3>
+        <h3>🎁 រង្វាន់ឈ្នះរបស់អ្នក</h3>
         <table class="table table-bordered table-striped">
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Prize Name</th>
-              <th>Image</th>
-              <th>Time Won</th>
-            </tr>
+            <tr><th>#</th><th>Prize</th><th>Image</th><th>Time</th></tr>
           </thead>
           <tbody id="prizeTableBody"></tbody>
         </table>
@@ -85,121 +129,128 @@
   </div>
 
   <div id="congratsPopup" class="text-center">
-    🎉 Congratulations! You won: <span id="prizeText"></span>
-    <br>
+    🎉 អបអរសាទរ! អ្នកឈ្នះរង្វាន់៖ <span id="prizeText"></span><br>
     <img id="prizeImage" src="" alt="Prize Image" class="img-fluid" />
+    <br><br>
+    <button id="closePopup" class="btn btn-danger">Close</button>
   </div>
 
-  j<!-- All content remains the same above until the <script> tag -->
-<script>
-  const canvas = document.getElementById('wheelCanvas');
-  const ctx = canvas.getContext('2d');
+  <audio id="spinSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_275a0fcfaf.mp3"></audio>
+  <audio id="winSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_79d593f7c9.mp3"></audio>
 
-  const segments = [ 
-    { name: '1. ស្រោម ទូរសព្ទ័ iPhone គ្រប់សេរី ១', image: 'https://djd1xqjx2kdnv.cloudfront.net/photos/36/45/486053_11037_XXL.jpg' },
-    { name: '2. Power Bank 10000PW', image: 'https://m.media-amazon.com/images/I/61BBj1YOHEL._AC_UF894,1000_QL80_.jpg' },
-    { name: '3. កាសហ្សីន', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZd9OAIEltTu5RE3zMzk4rT95l30Jgb4mjq-myNCCXKhOycFc6qByrR5jozJfC3cDZhkU&usqp=CAU' },
-    { name: '4. Sumsung S10 1គ្រឿង', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROQ5FH3-NxAMdf7kZjn_mBVRvTkO9RfODvYw&s' },
-    { name: '5. iPad Air 2 16g', image: 'https://i5.walmartimages.com/seo/Restored-2014-Apple-iPad-air-Wi-Fi-64-GB-Gold-2nd-Generation-Refurbished_4c90df39-16bc-4ef2-b183-463134147dd9.6862408139e3d57dca7824ce03fdc8e4.jpeg' },
-    { name: '6. 15 promax 256g ថ្មី ១គ្រឿង', image: 'https://via.placeholder.com/150?text=iPhone+15+Pro+Max' },
-    { name: '7. Discount 30%', image: 'https://img.freepik.com/premium-photo/30-percent-discount-offers-tag-with-pink-3d-style-design_2239-25601.jpg?semt=ais_hybrid&w=740' },
-    { name: '8. ឆ្នាំងសាកហ្សីន', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSlOZH98g7c4-YJG9fdxkTvnxb0qbHIcLjwQ&s' },
-    { name: '9. Power Bank 10000PW', image: 'https://m.media-amazon.com/images/I/61BBj1YOHEL._AC_UF894,1000_QL80_.jpg' },
-    { name: '10. ស្រោម ទូរសព្ទ័ iPhone គ្រប់សេរី ១', image: 'https://djd1xqjx2kdnv.cloudfront.net/photos/36/45/486053_11037_XXL.jpg' }
-  ];
+  <script>
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const spinSound = document.getElementById("spinSound");
+    const winSound = document.getElementById("winSound");
 
-  const colors = [
-    '#FF6384', '#36A2EB', '#FFCE56', '#AA65D2',
-    '#6DF178', '#FF5733', '#00CED1', '#FFD700',
-    '#A0D468', '#F6BB42'
-  ];
+    const segments = [
+      { name: 'ស្រោមទូរស័ព្ទគ្រប់សេរី ១', img: 'https://djd1xqjx2kdnv.cloudfront.net/photos/36/45/486053_11037_XXL.jpg', prob: 7 },
+      { name: 'ឆ្នាំងសាកហ្ស៊ីន', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSlOZH98g7c4-YJG9fdxkTvnxb0qbHIcLjwQ&s', prob: 5 },
+      { name: 'កាសហ្ស៊ីន', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZd9OAIEltTu5RE3zMzk4rT95l30Jgb4mjq-myNCCXKhOycFc6qByrR5jozJfC3cDZhkU&usqp=CAU', prob: 4 },
+      { name: 'Samsung S10 1គ្រឿង', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROQ5FH3-NxAMdf7kZjn_mBVRvTkO9RfODvYw&s', prob: 0.5 },
+      { name: 'iPad Air 2 16g', img: 'https://i5.walmartimages.com/seo/Restored-2014-Apple-iPad-air-Wi-Fi-64-GB-Gold-2nd-Generation-Refurbished_4c90df39-16bc-4ef2-b183-463134147dd9.6862408139e3d57dca7824ce03fdc8e4.jpeg', prob: 1 },
+      { name: 'iPhone 15 Pro Max', img: 'https://cdn.dsmcdn.com/mnresize/1200/1800/ty1002/product/media/images/prod/PIM/20230921/07/9ad54364-69dd-45fc-9a54-562901b37704/1_org_zoom.jpg', prob: 0.1 },
+      { name: 'Power Bank​ 10000 mah', img: 'https://m.media-amazon.com/images/I/61BBj1YOHEL._AC_UF894,1000_QL80_.jpg', prob: 5 },
+      { name: 'កាស​ Airpod 2', img: 'https://khmersamnang.com/wp-content/uploads/2021/12/AirPods-with-Charging.jpg', prob: 3 },
+      { name: 'Nokia 8110', img: 'https://fdn2.gsmarena.com/vv/bigpic/nokia-8110-4g-.jpg', prob: 5 },
+      { name: 'Discount 10%', img: 'https://globalstudentnetwork.com/wp-content/uploads/2018/06/Discount.gif', prob: 2 },
+      { name: 'Coupon 50$', img: 'https://mekongquilts.com/images/2014/12/50-gift-voucher.jpg', prob: 3 },
+      { name: 'ដបទឹក', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR72DwgMa9OCPqTwDrqF5RVnYQXip27lCU2kw&s', prob: 27 },
+      { name: 'អាវយឺត', img: 'https://contents.mediadecathlon.com/p2157319/k$45a8143f29ae498e05be9c1588d95135/-breathable-.jpg?format=auto&quality=70&f=768x768', prob: 30 },
+      { name: 'ទូរសព្ទ័ D52 1គ្រឿង', img: 'https://m.media-amazon.com/images/I/61bZ6+F9vZL._AC_UF350,350_QL80_.jpg', prob: 7 },
+    ];
 
-  const expireAt = new Date("2025-04-25T23:59:00Z");
+    const colors = ['#ffe9be', 'gold'];
 
-  function drawWheel(rotation = 0) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const numSegments = segments.length;
-    const angle = (2 * Math.PI) / numSegments;
+    function drawWheel(rotation = 0) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const angle = (2 * Math.PI) / segments.length;
+      for (let i = 0; i < segments.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(250, 250);
+        ctx.arc(250, 250, 250, angle * i + rotation, angle * (i + 1) + rotation);
+        ctx.closePath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+        ctx.strokeStyle = "#000";
+        ctx.stroke();
 
-    for (let i = 0; i < numSegments; i++) {
-      ctx.beginPath();
-      ctx.moveTo(250, 250);
-      ctx.arc(250, 250, 250, angle * i + rotation, angle * (i + 1) + rotation);
-      ctx.fillStyle = colors[i % colors.length];
-      ctx.fill();
-      ctx.save();
-      ctx.translate(250, 250);
-      ctx.rotate(angle * (i + 0.5) + rotation);
-      ctx.fillStyle = "#fff";
-      ctx.font = "15px Arial";
-      ctx.fillText(segments[i].name, 70, 10);
-      ctx.restore();
-    }
-  }
-
-  drawWheel();
-
-  const spinButton = document.getElementById("spinButton");
-
-  spinButton.addEventListener("click", () => {
-    const now = new Date();
-    if (now > expireAt) {
-      alert("Sorry, the wheel is no longer active. Expired at: " + expireAt.toLocaleString());
-      return;
-    }
-
-    const spins = parseInt(localStorage.getItem("spins") || "0");
-    if (spins >= 100) {
-      alert("You have already spun the wheel!");
-      return;
-    }
-
-    // Weighted logic
-    const weights = segments.map(segment =>
-      segment.name.includes("15 promax") ? 1 : 99
-    );
-    const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-    let randomNum = Math.random() * totalWeight;
-    let prizeIndex = 0;
-
-    for (let i = 0; i < weights.length; i++) {
-      if (randomNum < weights[i]) {
-        prizeIndex = i;
-        break;
+        ctx.save();
+        ctx.translate(250, 250);
+        ctx.rotate(angle * (i + 0.5) + rotation);
+        ctx.fillStyle = "#000";
+        ctx.font = "bold 13px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(segments[i].name, 130, 0);
+        ctx.restore();
       }
-      randomNum -= weights[i];
     }
 
-    const numSegments = segments.length;
-    const anglePerSegment = 360 / numSegments;
-    const rotationAngle = 360 * 5 + (360 - prizeIndex * anglePerSegment - anglePerSegment / 2);
+    drawWheel();
 
-    canvas.style.transform = `rotate(${rotationAngle}deg)`;
+    function pickPrize() {
+      const total = segments.reduce((acc, seg) => acc + seg.prob, 0);
+      const rand = Math.random() * total;
+      let sum = 0;
+      for (let i = 0; i < segments.length; i++) {
+        sum += segments[i].prob;
+        if (rand < sum) return i;
+      }
+      return segments.length - 1;
+    }
 
-    setTimeout(() => {
-      const prize = segments[prizeIndex];
-      document.getElementById("prizeText").textContent = prize.name;
-      document.getElementById("prizeImage").src = prize.image;
+    const spinButton = document.getElementById("spinButton");
+    const prizeTable = document.getElementById("prizeTableBody");
 
+    spinButton.addEventListener("click", () => {
+      if (localStorage.getItem("hasSpun") === "true") {
+        alert("អ្នកបានបង្វិលរួចហើយ។ អ្នកមិនអាចបង្វិលម្ដងទៀតបានទេ។");
+        return;
+      }
+
+      const index = pickPrize();
+      const anglePerSegment = 360 / segments.length;
+      const randomSpin = 360 * 5;
+      const finalAngle = randomSpin + (90 - index * anglePerSegment - anglePerSegment / 2);
+
+      spinSound.play();
+      canvas.style.transform = `rotate(${finalAngle}deg)`;
+
+      setTimeout(() => {
+        winSound.play();
+        const prize = segments[index];
+        document.getElementById("prizeText").textContent = prize.name;
+        document.getElementById("prizeImage").src = prize.img;
+
+        const popup = document.getElementById("congratsPopup");
+        popup.style.display = "block";
+        popup.style.opacity = 1;
+
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `<td>${prizeTable.rows.length + 1}</td><td>${prize.name}</td><td><img src="${prize.img}" width="80"/></td><td>${new Date().toLocaleString()}</td>`;
+        prizeTable.appendChild(newRow);
+
+        // Disable further spins
+        localStorage.setItem("hasSpun", "true");
+        spinButton.disabled = true;
+        spinButton.textContent = "បានបង្វិលរួច";
+      }, 4000);
+    });
+
+    document.getElementById("closePopup").addEventListener("click", () => {
       const popup = document.getElementById("congratsPopup");
-      popup.style.display = 'block';
-      popup.style.opacity = 1;
-      popup.style.animation = 'fadeUp 1s ease-out';
+      popup.style.opacity = 0;
+      setTimeout(() => popup.style.display = 'none', 500);
+    });
 
-      localStorage.setItem("spins", (spins + 1).toString());
-
-      const prizeTable = document.getElementById("prizeTableBody");
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = `
-        <td>${prizeTable.rows.length + 1}</td>
-        <td>${prize.name}</td>
-        <td><img src="${prize.image}" width="80"/></td>
-        <td>${new Date().toLocaleString()}</td>
-      `;
-      prizeTable.appendChild(newRow);
-    }, 4000);
-  });
-</script>
-
+    // Disable button if already spun
+    window.onload = () => {
+      if (localStorage.getItem("hasSpun") === "true") {
+        spinButton.disabled = true;
+        spinButton.textContent = "បានបង្វិលរួច";
+      }
+    };
+  </script>
 </body>
 </html>
